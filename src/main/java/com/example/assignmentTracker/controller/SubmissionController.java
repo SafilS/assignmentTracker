@@ -17,19 +17,19 @@ public class SubmissionController {
     private SubmissionService submissionService;
 
 
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     @PostMapping
     public Submission submit(@RequestBody Submission dto, Principal principal) {
         return submissionService.submit(dto, principal.getName());
     }
 
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     @GetMapping("/student")
     public List<Submission> getMySubmissions(Principal principal) {
         return submissionService.getByStudent(principal.getName());
     }
 
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @GetMapping("/assignment/{id}")
     public List<Submission> getAssignmentById(@PathVariable int id){
         return submissionService.getByAssignmentId(id);

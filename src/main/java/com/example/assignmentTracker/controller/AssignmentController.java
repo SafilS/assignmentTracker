@@ -15,13 +15,13 @@ public class AssignmentController {
 
     @Autowired private AssignmentService assignmentService;
 
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @PostMapping
     public Assignment create(@RequestBody Assignment dto, Principal principal) {
         return assignmentService.create(dto, principal.getName());
     }
 
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ROLE_TEACHER', 'ROLE_STUDENT')")
     @GetMapping
     public List<Assignment> getAll() {
         return assignmentService.getAll();

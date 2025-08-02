@@ -39,7 +39,7 @@ public class AuthService {
             throw new BadCredentialsException("Invalid credentials");
         }
 
-        String token = jwtUtil.generateToken(user.getUserName());
+        String token = jwtUtil.generateToken(user);
         return new TokenResponse(token);
     }
 }

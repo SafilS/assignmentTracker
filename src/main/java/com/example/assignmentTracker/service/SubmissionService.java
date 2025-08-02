@@ -28,16 +28,20 @@ public class SubmissionService {
     @Autowired
     private AssignmentRepository assignmentRepo;
 
-    // Submit an assignment (STUDENT only)
     public Submission submit(Submission submission, String studentUsername) {
         User student = userRepo.findByUserName(studentUsername);
 
-        if (student.getRole() != Role.STUDENT) {
+        if (student.getRole() != Role.ROLE_STUDENT) {
             throw new AccessDeniedException("Only students can submit assignments");
         }
 
         Assignment assignment = assignmentRepo.findById(submission.getAssignment().getId())
                 .orElseThrow(() -> new NoSuchElementException("Assignment not found"));
+
+        boolean alreadySubmitted = submissionRepo.existsByStudentAndAssignmentId(student, assignment.getId());
+        if (alreadySubmitted) {
+            throw new IllegalStateException("You have already submitted this assignment.");
+        }
 
         submission.setStudent(student);
         submission.setAssignment(assignment);
@@ -46,14 +50,12 @@ public class SubmissionService {
         return submissionRepo.save(submission);
     }
 
-    // Get submissions by current student
     public List<Submission> getByStudent(String studentUsername) {
         User student = userRepo.findByUserName(studentUsername);
 
         return submissionRepo.findByStudent(student);
     }
 
-    // Optional: Get submissions for a specific assignment (TEACHER only)
     public List<Submission> getByAssignmentId(int assignmentId) {
         Assignment assignment = assignmentRepo.findById(assignmentId)
                 .orElseThrow(() -> new NoSuchElementException("Assignment not found"));

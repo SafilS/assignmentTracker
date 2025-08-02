@@ -21,11 +21,10 @@ public class AssignmentService {
     @Autowired
     private UserRepository userRepo;
 
-    // Create a new assignment (TEACHER only)
     public Assignment create(Assignment assignment, String teacherUsername) {
         User teacher = userRepo.findByUserName(teacherUsername);
 
-        if (teacher==null ||teacher.getRole() != Role.TEACHER) {
+        if (teacher==null ||teacher.getRole() != Role.ROLE_TEACHER) {
             throw new AccessDeniedException("Only teachers can create assignments");
         }
 
@@ -33,12 +32,10 @@ public class AssignmentService {
         return assignmentRepo.save(assignment);
     }
 
-    // Get all assignments (both roles)
     public List<Assignment> getAll() {
         return assignmentRepo.findAll();
     }
 
-    // Optional: Get assignments created by current teacher
     public List<Assignment> getByTeacher(String teacherUsername) {
         User teacher = userRepo.findByUserName(teacherUsername);
         return assignmentRepo.findByTeacher(teacher);
